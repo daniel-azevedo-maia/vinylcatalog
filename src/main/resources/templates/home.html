@@ -193,8 +193,6 @@
                 text-transform: uppercase;
                 font-weight: bold;
             }
-
-            .album-info::before { content: ""; }
         }
 
         .btn-report {
@@ -285,29 +283,34 @@
     function exportPdf() {
         const owner = '[[${ownerName}]]';
         const table = document.getElementById('main-table');
-
         if (!table) return;
 
         const clone = table.cloneNode(true);
         clone.querySelectorAll('th:last-child, td:last-child').forEach(e => e.remove());
 
         const wrapper = document.createElement('div');
-        wrapper.style.position = 'fixed';
-        wrapper.style.left = '-10000px';
+        wrapper.style.position = 'absolute';
+        wrapper.style.top = '0';
+        wrapper.style.left = '0';
+        wrapper.style.zIndex = '-1';
         wrapper.style.background = 'white';
         wrapper.style.color = 'black';
         wrapper.style.padding = '20px';
-        wrapper.style.width = '1200px';
+        wrapper.style.width = '794px';
+        wrapper.style.minHeight = '1122px';
+        wrapper.style.fontFamily = 'serif';
 
         wrapper.innerHTML = `
-            <h1 style="text-align:center;font-family:serif;">Catálogo de Discos</h1>
-            <p style="text-align:center;">Colecionador: ${owner}</p><hr>
+            <h1 style="text-align:center;">Catálogo de Discos</h1>
+            <p style="text-align:center;">Colecionador: ${owner}</p>
+            <hr>
         `;
 
-        clone.querySelectorAll('th, td').forEach(c => {
-            c.style.color = 'black';
-            c.style.border = '1px solid #ccc';
-            c.style.padding = '8px';
+        clone.querySelectorAll('*').forEach(el => {
+            el.style.color = 'black';
+            el.style.border = '1px solid #ccc';
+            el.style.padding = '8px';
+            el.style.fontFamily = 'serif';
         });
 
         wrapper.appendChild(clone);
@@ -316,8 +319,8 @@
         html2pdf()
             .set({
                 margin: 10,
-                filename: 'Acervo_' + owner + '.pdf',
-                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#fff' },
+                filename: `Acervo_${owner}.pdf`,
+                html2canvas: { scale: 2, backgroundColor: '#ffffff' },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             })
             .from(wrapper)
