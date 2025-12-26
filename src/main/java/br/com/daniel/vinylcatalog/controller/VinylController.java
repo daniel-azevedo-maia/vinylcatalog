@@ -1,14 +1,13 @@
 package br.com.daniel.vinylcatalog.controller;
 
+import br.com.daniel.vinylcatalog.domain.model.User;
 import br.com.daniel.vinylcatalog.domain.model.Vinyl;
 import br.com.daniel.vinylcatalog.domain.repository.VinylRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model; // Importante para passar dados para a tela
-import org.springframework.web.bind.annotation.GetMapping; // Adicionado
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -16,7 +15,6 @@ public class VinylController {
 
     private final VinylRepository vinylRepository;
 
-    // LISTAR E ADICIONAR (Já existia, mantido)
     @PostMapping("/vinyls")
     public String addVinyl(
             @RequestParam String album,
@@ -24,38 +22,63 @@ public class VinylController {
             @RequestParam(required = false) Integer ano,
             @RequestParam String genero,
             @RequestParam String ondeComprei,
-            @RequestParam String estado) {
+            @RequestParam String estado,
+            Authentication auth
+    ) {
 
-        Vinyl vinyl = new Vinyl(album, artista, ano, genero, ondeComprei, estado);
+        User owner = (User) auth.getPrincipal();
+
+        Vinyl vinyl = new Vinyl(
+                album,
+                artista,
+                ano,
+                genero,
+                ondeComprei,
+                estado,
+                owner
+        );
+
         vinylRepository.save(vinyl);
         return "redirect:/";
     }
 
-    // REMOVER (Já existia, mantido)
     @PostMapping("/vinyls/delete/{id}")
-    public String deleteVinyl(@PathVariable Long id) {
-        vinylRepository.deleteById(id);
+    public String deleteVinyl(@PathVariable Long id, Authentication auth) {
+
+        User owner = (User) auth.getPrincipal();
+
+        vinylRepository.findByIdAndOwnerUsername(id, owner.getUsername())
+                .ifPresent(vinylRepository::delete);
+
         return "redirect:/";
     }
 
-    // --- NOVOS MÉTODOS PARA EDIÇÃO ---
-
-    // 1. Abrir a tela de edição
     @GetMapping("/vinyls/edit/{id}")
-    public String editForm(@PathVariable Long id, Model model) {
-        Vinyl vinyl = vinylRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Disco inválido:" + id));
+    public String editForm(@PathVariable Long id, Authentication auth, Model model) {
+
+        User owner = (User) auth.getPrincipal();
+
+        Vinyl vinyl = vinylRepository
+                .findByIdAndOwnerUsername(id, owner.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Disco não encontrado"));
+
         model.addAttribute("vinyl", vinyl);
-        return "edit-vinyl"; // Nome do novo arquivo HTML que você precisará criar
+        return "edit-vinyl";
     }
 
-    // 2. Salvar a alteração
     @PostMapping("/vinyls/update/{id}")
-    public String updateVinyl(@PathVariable Long id, Vinyl vinylDetails) {
-        Vinyl vinyl = vinylRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Disco inválido:" + id));
+    public String updateVinyl(
+            @PathVariable Long id,
+            Vinyl vinylDetails,
+            Authentication auth
+    ) {
 
-        // Atualiza os campos (Isso só funciona se você adicionou @Setter no Vinyl.java)
+        User owner = (User) auth.getPrincipal();
+
+        Vinyl vinyl = vinylRepository
+                .findByIdAndOwnerUsername(id, owner.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Disco não encontrado"));
+
         vinyl.setAlbum(vinylDetails.getAlbum());
         vinyl.setArtista(vinylDetails.getArtista());
         vinyl.setAno(vinylDetails.getAno());

@@ -3,12 +3,13 @@ package br.com.daniel.vinylcatalog.domain.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter; // 1. Importe o Setter
+import lombok.Setter;
 
 @Entity
 @Getter
-@Setter // 2. Adicione o @Setter para permitir a edição dos campos
+@Setter
 @NoArgsConstructor
+@Table(name = "vinyls")
 public class Vinyl {
 
     @Id
@@ -22,12 +23,17 @@ public class Vinyl {
     private String ondeComprei;
     private String estado;
 
-    public Vinyl(String album, String artista, Integer ano, String genero, String ondeComprei, String estado) {
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
+    public Vinyl(String album, String artista, Integer ano, String genero, String ondeComprei, String estado, User owner) {
         this.album = album;
         this.artista = artista;
         this.ano = ano;
         this.genero = genero;
         this.ondeComprei = ondeComprei;
         this.estado = estado;
+        this.owner = owner;
     }
 }

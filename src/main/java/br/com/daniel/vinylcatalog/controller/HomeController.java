@@ -16,12 +16,13 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, Authentication auth) {
-        model.addAttribute("vinyls", vinylRepository.findAll());
 
         if (auth != null && auth.getPrincipal() instanceof User user) {
             model.addAttribute("ownerName", user.getFullName());
+            model.addAttribute("vinyls", vinylRepository.findAllByOwnerUsernameOrderByIdDesc(user.getUsername()));
         } else {
             model.addAttribute("ownerName", "Colecionador");
+            model.addAttribute("vinyls", java.util.Collections.emptyList());
         }
 
         return "home";
