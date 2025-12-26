@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Disco | Meus Discos</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #d4af37;
+            --bg: #0f0f0f;
+            --card: #1a1a1a;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .edit-card {
+            width: 100%;
+            max-width: 700px;
+            background: var(--card);
+            border: 1px solid #222;
+            padding: 40px;
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            color: var(--accent);
+            font-size: 2.2rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field label {
+            font-size: 0.65rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .field input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #333;
+            color: white;
+            padding: 10px 0;
+            outline: none;
+        }
+
+        .field input:focus {
+            border-bottom-color: var(--accent);
+        }
+
+        .actions {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        .btn-save {
+            background: var(--accent);
+            color: black;
+        }
+
+        .btn-save:hover {
+            background: #fff;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid #444;
+            color: #aaa;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        @media (max-width: 480px) {
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="edit-card">
+
+    <h1>Editar Disco</h1>
+
+    <form th:action="@{/vinyls/update/{id}(id=${vinyl.id})}"
+          method="post"
+          th:object="${vinyl}">
+
+        <div class="form-grid">
+
+            <div class="field">
+                <label>Álbum</label>
+                <input type="text" th:field="*{album}" required>
+            </div>
+
+            <div class="field">
+                <label>Artista</label>
+                <input type="text" th:field="*{artista}" required>
+            </div>
+
+            <div class="field">
+                <label>Ano</label>
+                <input type="number" th:field="*{ano}">
+            </div>
+
+            <div class="field">
+                <label>Gênero</label>
+                <input type="text" th:field="*{genero}">
+            </div>
+
+            <div class="field">
+                <label>Procedência</label>
+                <input type="text" th:field="*{ondeComprei}">
+            </div>
+
+            <div class="field">
+                <label>Conservação</label>
+                <input type="text" th:field="*{estado}">
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <a th:href="@{/}" class="btn btn-cancel">Cancelar</a>
+            <button type="submit" class="btn btn-save">Salvar Alterações</button>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

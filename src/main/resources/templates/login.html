@@ -6,7 +6,7 @@
     <title>Login | Meus Discos</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --accent: #d4af37; --bg: #0a0a0b; --card: #161618; --font-serif: 'Playfair Display', serif; }
+        :root { --accent: #d4af37; --bg: #0a0a0b; --card: #161618; --font-serif: 'Playfair Display', serif; --success: #4bb543; --error: #ff4d4d; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: var(--bg); color: white; font-family: 'Montserrat', sans-serif;
@@ -19,6 +19,12 @@
         }
         h1 { font-family: var(--font-serif); color: var(--accent); font-size: 2.5rem; margin-bottom: 0.5rem; }
         .subtitle { font-size: 0.7rem; letter-spacing: 3px; color: #666; text-transform: uppercase; margin-bottom: 2.5rem; }
+
+        /* Mensagens de Alerta */
+        .alert { padding: 12px; font-size: 0.75rem; margin-bottom: 1.5rem; border-radius: 2px; text-transform: uppercase; font-weight: 600; }
+        .alert-success { background: rgba(75, 181, 67, 0.1); color: var(--success); border: 1px solid var(--success); }
+        .alert-error { background: rgba(255, 77, 77, 0.1); color: var(--error); border: 1px solid var(--error); }
+
         .input-group { text-align: left; margin-bottom: 1.5rem; }
         label { font-size: 0.65rem; text-transform: uppercase; color: var(--accent); letter-spacing: 1px; margin-bottom: 8px; display: block; }
         input {
@@ -27,11 +33,9 @@
         }
         input:focus { border-bottom-color: var(--accent); }
 
-        /* Correção do Bug de Fundo Branco/Azul (Autofill) */
-        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+        input:-webkit-autofill {
             -webkit-text-fill-color: white !important;
             -webkit-box-shadow: 0 0 0px 1000px var(--card) inset !important;
-            transition: background-color 5000s ease-in-out 0s;
         }
 
         .btn-login {
@@ -49,6 +53,19 @@
 <div class="login-card">
     <h1>Meus Discos</h1>
     <p class="subtitle">Gestão de Acervo</p>
+
+    <div th:if="${param.registered}" class="alert alert-success">
+        Cadastro realizado! Use suas credenciais.
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-error">
+        Usuário ou senha inválidos.
+    </div>
+
+    <div th:if="${param.logout}" class="alert" style="color: #888; border: 1px solid #444;">
+        Sessão encerrada com sucesso.
+    </div>
+
     <form th:action="@{/login}" method="post">
         <div class="input-group">
             <label>Usuário</label>

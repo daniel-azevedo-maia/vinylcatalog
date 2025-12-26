@@ -29,10 +29,12 @@ public class RegisterController {
             @RequestParam String password
     ) {
 
+        // Se o usuário já existir, volta para o cadastro com erro
         if (userRepository.findByUsername(username).isPresent()) {
             return "redirect:/register?error";
         }
 
+        // Cria o usuário com senha criptografada
         User user = new User(
                 username,
                 passwordEncoder.encode(password),
@@ -41,6 +43,8 @@ public class RegisterController {
         );
 
         userRepository.save(user);
-        return "redirect:/login?registered";
+
+        // Redireciona para o login com mensagem de sucesso
+        return "redirect:/login?registered=true";
     }
 }

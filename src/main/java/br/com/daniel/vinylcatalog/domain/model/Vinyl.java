@@ -3,9 +3,11 @@ package br.com.daniel.vinylcatalog.domain.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter; // 1. Importe o Setter
 
 @Entity
 @Getter
+@Setter // 2. Adicione o @Setter para permitir a edição dos campos
 @NoArgsConstructor
 public class Vinyl {
 
